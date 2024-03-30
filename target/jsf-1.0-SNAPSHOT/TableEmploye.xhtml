@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<f:view>
+    <ui:composition template="template.xhtml">
+        <ui:define name="content">
+            <h:outputLabel value="Bienvenue Admin"/><br/>
+            <h3><h:outputLabel value="Employe List"/></h3>
+            <div class="table-container">
+                <h:form>
+                    <p:dataTable var="employe"
+                                 paginator="true"
+                                 paginatorPosition="bottom"
+                                 rows="4"
+                                 value="#{tableEmpBean.allEmploye}"
+                                 tableStyleClass="table table-striped table-dark"
+                                 rowStyleClass="text-info bold">
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Id" />
+                            </f:facet>
+                            <h:outputText value="#{employe.id}" rendered="true" />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Name" />
+                            </f:facet>
+                            <h:outputText value="#{employe.name}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Email" />
+                            </f:facet>
+                            <h:outputText value="#{employe.email}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Skill" />
+                            </f:facet>
+
+                            <h:inputTextarea value="#{skillService.findByEmployeId(employe.id)}" disabled="true"  />
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Project" />
+                            </f:facet>
+
+                            <h:inputTextarea value="#{contributionService.showProjectsAndImplication(employe.id)}" disabled="true"/>
+                        </p:column>
+
+                        <p:column width="200px">
+                            <f:facet name="header">
+                                <h:outputText value="#Action" />
+                            </f:facet>
+                            <div class="act-ctnr">
+                                <h:commandButton value="Delete" action="#{employeService.delete(employe)}" styleClass="btn btn-danger"/>
+                            </div>
+                        </p:column>
+                    </p:dataTable>
+                    <div class="actions">
+                        <h:commandButton value="Add Employe" action="#{tableEmpBean.switchForm()}" rendered="#{!tableEmpBean.form}" styleClass="btn btn-primary"  />
+                    </div>
+                </h:form>
+
+            </div>
+            <div class="add-form">
+                <h:form rendered="#{tableEmpBean.form}">
+                    <h:panelGrid columns="2">
+                        <h:outputLabel for="nom" value="Nom" />
+                        <h:panelGroup>
+                            <h:inputText id="nom" value="#{employe.name}" required="true" requiredMessage="name is required!!" />
+                            <br/>
+                            <h:message for="nom" styleClass="text-danger" />
+                        </h:panelGroup>
+
+                        <h:outputLabel for="email" value="Email" />
+                        <h:panelGroup>
+                            <h:inputText id="email" value="#{employe.email}" required="true" requiredMessage="email is required!!" >
+                                <f:validator validatorId="emailValidator"/>
+                            </h:inputText>
+                            <br/>
+                            <h:message for="email" styleClass="text-danger" />
+                        </h:panelGroup>
+                        <h:outputLabel for="skill" value="Skills (separate between them with - )" />
+                        <h:panelGroup>
+                            <h:inputText id="skill" value="#{tableEmpBean.skills}" required="true" requiredMessage="At least one skill is required!!" a:placeholder="skill-skill-skill" >
+                                <f:validator validatorId="skillsValidator" />
+                            </h:inputText>
+                            <br/>
+                            <h:message for="skill" styleClass="text-danger" />
+                        </h:panelGroup>
+
+                    </h:panelGrid>
+                    <div class="center">
+                        <h:commandButton value="Add" action="#{tableEmpBean.save(employe)}" styleClass="btn btn-success" style="margin: 25px;"/>
+                    </div>
+                </h:form>
+                <h:form>
+                    <h:commandButton value="Cancel" action="#{tableEmpBean.switchForm()}" rendered="#{tableEmpBean.form}" styleClass="btn btn-warning" style="margin-bottom: 10px;" />
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+</f:view>
+</html>
